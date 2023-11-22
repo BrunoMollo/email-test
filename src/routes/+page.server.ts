@@ -1,21 +1,31 @@
-import { GOOGLE_EMAIL } from "$env/static/private";
 import { sendEmail } from "$lib/emailService";
-import type { Actions } from "@sveltejs/kit";
+import { fail, type Actions } from "@sveltejs/kit";
+import { error } from "console";
 
 export const actions: Actions = {
 	default: async ({ request }) => {
 		const formdata = await request.formData()
 		const body = formdata.get('body')?.toString()
-		console.log('recived', body)
+		const to = formdata.get('to')?.toString()
 
-		const message = {
-			from: GOOGLE_EMAIL,
-			to: 'dia.mollo.bruno@gmail.com',
-			subject: 'test',
-			text: body ?? '',
-		};
-		const res = await sendEmail(message)
-		console.log(res)
+
+		if (!body || !to) {
+			return fail(400, { missingBody: !body, missingTo: !to })
+		}
+
+		try {
+			await sendEmail({
+				from: { name: "Bruno Mollo", address: "something@gmail.com" },
+				to,
+				subject: "Testing email",
+				text: body
+			})
+			return { sended: true, to }
+
+		} catch (err) {
+			throw error(500, 'could not send email')
+		}
+
 
 	}
 }

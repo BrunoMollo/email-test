@@ -22,6 +22,7 @@ transporter.verify(function(error) {
 });
 
 export function sendEmail(x: Mail.Options) {
+	// this wrapping might seem ugly, but is needed to deploy in Vercel
 	return new Promise((resolve, reject) => {
 		return transporter.sendMail(x, (err, info) => {
 			if (err) {
