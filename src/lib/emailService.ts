@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
 import { GOOGLE_EMAIL, GOOGLE_EMAIL_PASSWORD } from "$env/static/private";
+import type Mail from "nodemailer/lib/mailer";
 
 console.log(GOOGLE_EMAIL)
 let transporter = nodemailer.createTransport({
 	host: "smtp.gmail.com",
-	port: 587,
-	secure: false,
+	port: 465,
+	secure: true,
 	auth: {
 		user: GOOGLE_EMAIL,
 		pass: GOOGLE_EMAIL_PASSWORD,
@@ -20,4 +21,16 @@ transporter.verify(function(error) {
 	}
 });
 
-export default transporter;
+export function sendEmail(x: Mail.Options) {
+	return new Promise((resolve, reject) => {
+		return transporter.sendMail(x, (err, info) => {
+			if (err) {
+				console.error(err);
+				reject(err);
+			} else {
+				console.log(info);
+				resolve(info);
+			}
+		});
+	});
+}

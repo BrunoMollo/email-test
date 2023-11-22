@@ -1,5 +1,5 @@
 import { GOOGLE_EMAIL } from "$env/static/private";
-import transporter from "$lib/emailService";
+import { sendEmail } from "$lib/emailService";
 import type { Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
@@ -12,11 +12,10 @@ export const actions: Actions = {
 			from: GOOGLE_EMAIL,
 			to: 'dia.mollo.bruno@gmail.com',
 			subject: 'test',
-			text: body,
+			text: body ?? '',
 		};
+		const res = await sendEmail(message)
+		console.log(res)
 
-		transporter.sendMail(message)
-			.then(() => console.log('nice'))
-			.catch(() => console.log('ups'))
 	}
 }
